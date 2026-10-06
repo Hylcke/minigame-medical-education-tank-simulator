@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
+<title>Exam, Joakim's Med Ed Tank Simulator</title>
+<meta name="description" content="Five timed levels. Work the numbers out on paper, fire, and get scored on accuracy and speed.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="exam-page">
+<a class="skip" href="#main">Skip to the exam</a>
+<header class="bar">
+  <a class="brand" href="../index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="#B4B98A" stroke-width="2"/><path d="M13 2v7M13 17v7M2 13h7M17 13h7" stroke="#B4B98A" stroke-width="2"/><circle cx="13" cy="13" r="2" fill="#F0A830"/></svg><span>Joakim's Med Ed Tank Simulator<small>Range, drop and lead</small></span></a>
+  <nav aria-label="Exercises"><ol class="steps">
+    <li><a href="../mil-scale/index.html"><span class="n">1</span>Range</a></li>
+    <li><a href="../projectile-drop/index.html"><span class="n">2</span>Drop</a></li>
+    <li><a href="../lead/index.html"><span class="n">3</span>Lead</a></li>
+    <li><a href="../exam/index.html" aria-current="page"><span class="n">4</span>Exam</a></li>
+  </ol></nav>
+</header>
+
+<main id="main">
+
+  <!-- Start screen -->
+  <section id="intro" class="exam-intro" aria-labelledby="intro-h">
+    <div class="intro-copy">
+      <div class="crumb"><b>The exam</b> after the training</div>
+      <h1 id="intro-h">Five levels against the clock</h1>
+      <p class="lede">Get a pen, paper and a calculator. Each level shows you a picture and a few facts. Work out the answer on paper, type it in and fire. The formulas stay on screen, so it is about doing the sums right and fast. Levels 1, 4 and 5 need you to read the picture.</p>
+      <p class="phone-start"><a class="btn fire" href="#start-card">Choose a code and start</a></p>
+      <ol class="level-list" id="level-list"></ol>
+    </div>
+    <div class="intro-side panel" id="start-card">
+      <h2>How you are scored</h2>
+      <div class="panel-body">
+        <dl class="score-rules">
+          <div><dt>Accuracy</dt><dd><b>600</b> points. Full marks within 5% on range and 10% on hold over and lead. Then it drops fast, to nothing at 15% out on range, 35% on hold over and 30% on lead.</dd></div>
+          <div><dt>Speed</dt><dd><b>300</b> points. Full marks under the par time, nothing at four times par. Scaled down hard by your accuracy, so a fast guess scores nothing.</dd></div>
+          <div><dt>Hit</dt><dd><b>100</b> points if the round hits and your answer was at least half right.</dd></div>
+        </dl>
+        <p class="note">Each level is worth 1000, so the best possible score is 5000. The clock starts when you press Start on each level and stops when you fire.</p>
+        <div class="code-row">
+          <div class="field">
+            <div class="field-head"><label for="code">Exam code</label></div>
+            <div class="code-input"><input id="code" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="code-hint"><button class="btn" id="new-code" type="button">New code</button></div>
+            <p class="hint" id="code-hint">Give everyone in the room the same code and they all get the same numbers.</p>
+            <p class="err" id="code-err" role="alert"></p>
+          </div>
+        </div>
+        <button class="btn fire" id="begin" type="button">Start the exam</button>
+        <p class="best" id="best" hidden></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Levels -->
+  <section id="stage" hidden aria-label="Exam">
+    <div class="exam-bar">
+      <ol class="pips" id="pips" aria-label="Levels"></ol>
+      <div class="clock" id="clock-box">
+        <span class="clock-label">Time</span>
+        <span class="clock-time" id="clock" aria-live="off">0:00.0</span>
+        <span class="clock-par" id="par">par 1:00</span>
+        <span class="clock-bar"><i id="clock-fill"></i></span>
+      </div>
+      <div class="total"><span class="clock-label">Score</span><span class="total-num" id="running">0</span></div>
+      <div class="quit">
+        <button class="btn ghost" id="quit" type="button">Restart</button>
+        <div class="confirm" id="quit-confirm" hidden role="group" aria-label="Confirm restart">
+          <span>Lose this attempt?</span>
+          <button class="btn" id="quit-no" type="button">Keep going</button>
+          <button class="btn danger" id="quit-yes" type="button">Restart the exam</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sim exam-grid">
+      <div class="view-wrap">
+        <div class="view" id="view-box">
+          <canvas id="view" class="pan" tabindex="0" role="img" aria-label="View through the binoculars. Drag, or use the arrow keys, to line the vehicle up with the scale."></canvas>
+          <div class="stamp" id="stamp" aria-hidden="true"></div>
+          <span class="zoom-seg in-view" role="group" aria-label="Magnification">
+            <button type="button" class="chip" data-zoom="112" aria-pressed="true">Wide</button>
+            <button type="button" class="chip" data-zoom="56" aria-pressed="false">Close</button>
+          </span>
+          <div class="veil" id="veil">
+            <div class="veil-card">
+              <div class="veil-kicker" id="veil-kicker">Level 1 of 5</div>
+              <h2 id="veil-title">Range card</h2>
+              <p id="veil-text"></p>
+              <button class="btn fire" id="start" type="button">Start level 1</button>
+              <p class="veil-par" id="veil-par"></p>
+            </div>
+          </div>
+        </div>
+        <div class="view-caption">
+          <span class="how" id="how"><b><span class="ptr-fine">Drag, or use the arrow keys,</span><span class="ptr-coarse">Drag with your finger</span></b> to put one end of the vehicle on the centre line, then count the mils to the other end. Small ticks are 1 mil, numbered ticks 10. Close gives a finer reading.</span>
+        </div>
+      </div>
+
+      <section class="controls panel" id="orders" aria-labelledby="orders-h">
+        <h2 id="orders-h" tabindex="-1">Orders</h2>
+        <div class="panel-body">
+          <div id="orders-body"><p class="note">Press Start to see your orders.</p></div>
+          <form id="answer-form" novalidate autocomplete="off">
+            <div id="fields"></div>
+            <p class="dock-facts" id="dock-facts"></p>
+            <button class="btn fire" id="fire" type="submit" disabled>Fire <kbd>Enter</kbd></button>
+          </form>
+          <div class="quick" id="quick" hidden>
+            <div class="quick-score"><span>Level score</span><b id="quick-total">0</b><span>/ 1000</span></div>
+            <button class="btn fire" id="next2" type="button">Next level</button>
+            <a class="quick-link" href="#debrief">Show the working</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="working panel" id="debrief" hidden aria-labelledby="debrief-h">
+        <h2 id="debrief-h">Debrief</h2>
+        <div class="panel-body">
+          <div id="debrief-body"></div>
+          <div class="debrief-actions"><button class="btn fire" id="next" type="button">Next level</button></div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section id="results" hidden aria-labelledby="res-h">
+    <div class="results-wrap">
+      <div class="results-head panel">
+        <div class="panel-body results-grid">
+          <div>
+          <div class="crumb">Exam code <b id="res-code"></b></div>
+          <h1 id="res-h" tabindex="-1"><span id="res-total">0</span><small> / 5000</small></h1>
+          <p class="grade" id="res-grade"></p>
+          <p class="best" id="res-best"></p>
+          </div>
+          <ol class="res-bars" id="res-bars" aria-label="Score per level"></ol>
+          <div class="btn-row">
+            <button class="btn fire" id="again" type="button">Try the same code again</button>
+            <button class="btn" id="fresh" type="button">New exam code</button>
+            <a class="btn" href="../mil-scale/index.html">Back to training</a>
+          </div>
+        </div>
+      </div>
+      <div class="panel results-table">
+        <h2>Level by level</h2>
+        <div class="panel-body">
+          <div class="table-scroll"><table id="res-table">
+            <thead><tr><th scope="col">Level</th><th scope="col">Time</th><th scope="col">Accuracy</th><th scope="col">Speed</th><th scope="col">Hit</th><th scope="col">Total</th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sr-only" aria-live="polite" id="announce"></div>
+</main>
+
+<footer class="foot"><div class="foot-inner">
+  <p>Made by Joakim Edman for a med ed session on Russian and Soviet armour recognition. Same simplified models as the training pages: no wind, no drag, flat ground, steady targets. Best scores stay on this device.</p>
+</div></footer>
+
+<script src="../assets/js/physics.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/scope.js"></script>
+<script src="../assets/js/exam-core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

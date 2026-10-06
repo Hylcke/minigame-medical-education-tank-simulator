@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Range by mil scale, Joakim's Med Ed Tank Simulator</title>
+<meta name="description" content="Read a vehicle against a binocular mil scale and turn it into a range.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the simulator</a>
+<header class="bar">
+  <a class="brand" href="../index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="#B4B98A" stroke-width="2"/><path d="M13 2v7M13 17v7M2 13h7M17 13h7" stroke="#B4B98A" stroke-width="2"/><circle cx="13" cy="13" r="2" fill="#F0A830"/></svg><span>Joakim's Med Ed Tank Simulator<small>Range, drop and lead</small></span></a>
+  <nav aria-label="Exercises"><ol class="steps">
+    <li><a href="../mil-scale/index.html" aria-current="page"><span class="n">1</span>Range</a></li>
+    <li><a href="../projectile-drop/index.html"><span class="n">2</span>Drop</a></li>
+    <li><a href="../lead/index.html"><span class="n">3</span>Lead</a></li>
+    <li><a href="../exam/index.html"><span class="n">4</span>Exam</a></li>
+  </ol></nav>
+</header>
+
+<main id="main">
+  <div class="page-head">
+    <div class="crumb"><b>Exercise 1</b> of 3</div>
+    <h1>Range by mil scale</h1>
+    <p class="lede">Every vehicle has a known size. Measure how many mils it covers in the binoculars, then range = size × 1000 ÷ mils.</p>
+  </div>
+
+  <div class="sim">
+    <div class="view-wrap">
+      <div class="view round" id="view-box">
+        <canvas id="view" class="pan" tabindex="0" aria-label="Binocular view with a mil scale. Drag, or use the arrow keys, to move the scene against the scale." role="img"></canvas>
+        <div class="stamp" id="stamp" aria-hidden="true"></div>
+      </div>
+      <div class="view-caption">
+        <span><b>Drag</b> the view or use the <b>arrow keys</b> to line the vehicle up with the scale.</span>
+        <span>Small ticks are 1 mil. Numbered ticks are 10 mils. Measure the hull, not the gun.</span>
+      </div>
+    </div>
+
+    <section class="controls panel" aria-labelledby="ctl-h">
+      <h2 id="ctl-h">Set up</h2>
+      <div class="panel-body">
+        <fieldset class="seg" id="mode">
+          <legend>Mode</legend>
+          <input type="radio" name="mode" id="m-explore" value="explore" checked><label for="m-explore">Explore</label>
+          <input type="radio" name="mode" id="m-practice" value="practice"><label for="m-practice">Practice</label>
+        </fieldset>
+
+        <fieldset class="seg">
+          <legend>Magnification</legend>
+          <input type="radio" name="zoom" id="z-wide" value="112" checked><label for="z-wide">Wide, 112 mils</label>
+          <input type="radio" name="zoom" id="z-close" value="56"><label for="z-close">Close, 56 mils</label>
+        </fieldset>
+
+        <div id="explore-ctl">
+          <fieldset class="seg">
+            <legend>Target</legend>
+            <input type="radio" name="tgt" id="t-t72" value="t72" checked><label for="t-t72">T-72</label>
+            <input type="radio" name="tgt" id="t-bmp2" value="bmp2"><label for="t-bmp2">BMP-2</label>
+            <input type="radio" name="tgt" id="t-btr82" value="btr82"><label for="t-btr82">BTR-82A</label>
+            <input type="radio" name="tgt" id="t-ural" value="ural"><label for="t-ural">Truck</label>
+            <input type="radio" name="tgt" id="t-soldier" value="soldier"><label for="t-soldier">Soldier</label>
+          </fieldset>
+          <fieldset class="seg">
+            <legend>Aspect</legend>
+            <input type="radio" name="asp" id="a-side" value="side" checked><label for="a-side">Side on</label>
+            <input type="radio" name="asp" id="a-front" value="front"><label for="a-front">Head on</label>
+          </fieldset>
+          <div class="field">
+            <div class="field-head"><label for="range">True range</label><span class="num"><input id="range-n" type="text" inputmode="decimal" autocomplete="off" aria-label="True range in metres"><span class="u">m</span></span></div>
+            <div class="range"><input type="range" id="range" min="100" max="1500" step="10" value="300"></div>
+          </div>
+          <div class="btn-row"><button class="btn" id="snap" type="button">Line up on the scale</button></div>
+        </div>
+
+        <div id="practice-ctl" hidden>
+          <p class="note">A vehicle appears at an unknown range. Read it against the scale, enter your reading and call the range. Within 10% counts as good.</p>
+          <fieldset class="seg">
+            <legend>I measured its</legend>
+            <input type="radio" name="dim" id="d-len" value="len" checked><label for="d-len">Length or width</label>
+            <input type="radio" name="dim" id="d-ht" value="ht"><label for="d-ht">Height</label>
+          </fieldset>
+          <div class="field">
+            <div class="field-head"><label for="reading">My reading</label><span class="num"><input id="reading-n" type="text" inputmode="decimal" autocomplete="off" aria-label="Reading in mils"><span class="u">mils</span></span></div>
+            <div class="range"><input type="range" id="reading" min="1" max="120" step="0.5" value="20"></div>
+          </div>
+          <button class="btn fire" id="call" type="button">Call the range</button>
+          <div class="btn-row"><button class="btn" id="next" type="button">New target <kbd>N</kbd></button><button class="btn" id="recentre" type="button">Re-centre view</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="working panel" aria-labelledby="w-h">
+      <h2 id="w-h">The working</h2>
+      <div class="panel-body" id="working"></div>
+    </section>
+
+    <section class="log panel" aria-labelledby="l-h">
+      <h2 id="l-h">Range cards</h2>
+      <div class="panel-body">
+        <div class="score" id="score"></div>
+        <ol id="log"></ol>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="foot"><div class="foot-inner">
+  <p>Sizes are hull dimensions from open sources, rounded. A mil here is 1/1000 of the range, the small-angle rule used on binocular and sight scales. Training aid only.</p>
+  <p class="next"><a class="btn" href="../projectile-drop/index.html">Next: projectile drop</a></p>
+</div></footer>
+
+<script src="../assets/js/physics.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/scope.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

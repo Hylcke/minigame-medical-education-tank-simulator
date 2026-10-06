@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leading a moving target, Joakim's Med Ed Tank Simulator</title>
+<meta name="description" content="Aim ahead of a moving vehicle so it drives into your round.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="lead-page">
+<a class="skip" href="#main">Skip to the simulator</a>
+<header class="bar">
+  <a class="brand" href="../index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="#B4B98A" stroke-width="2"/><path d="M13 2v7M13 17v7M2 13h7M17 13h7" stroke="#B4B98A" stroke-width="2"/><circle cx="13" cy="13" r="2" fill="#F0A830"/></svg><span>Joakim's Med Ed Tank Simulator<small>Range, drop and lead</small></span></a>
+  <nav aria-label="Exercises"><ol class="steps">
+    <li><a href="../mil-scale/index.html"><span class="n">1</span>Range</a></li>
+    <li><a href="../projectile-drop/index.html"><span class="n">2</span>Drop</a></li>
+    <li><a href="../lead/index.html" aria-current="page"><span class="n">3</span>Lead</a></li>
+    <li><a href="../exam/index.html"><span class="n">4</span>Exam</a></li>
+  </ol></nav>
+</header>
+
+<main id="main">
+  <div class="page-head">
+    <div class="crumb"><b>Exercise 3</b> of 3</div>
+    <h1>Leading a moving target</h1>
+    <p class="lede">The round takes about a second to get there and the vehicle keeps driving. Aim in front of it by however far it moves sideways in that time.</p>
+  </div>
+
+  <div class="sim">
+    <div class="view-wrap">
+      <div class="view" id="view-box">
+        <canvas id="view" aria-label="Map of the engagement on the left, close-up of the target and the sight picture on the right" role="img"></canvas>
+        <div class="stamp" id="stamp" aria-hidden="true"></div>
+      </div>
+      <div class="view-caption">
+        <span><b>Left:</b> the map, you at the bottom.</span>
+        <span><b>Right:</b> close-up at the target, and the picture through your sight.</span>
+      </div>
+    </div>
+
+    <section class="controls panel" aria-labelledby="ctl-h">
+      <h2 id="ctl-h">Set up</h2>
+      <div class="panel-body">
+        <fieldset class="seg">
+          <legend>Target</legend>
+          <input type="radio" name="tgt" id="t-t72" value="t72" checked><label for="t-t72">T-72</label>
+          <input type="radio" name="tgt" id="t-bmp2" value="bmp2"><label for="t-bmp2">BMP-2</label>
+          <input type="radio" name="tgt" id="t-btr82" value="btr82"><label for="t-btr82">BTR-82A</label>
+          <input type="radio" name="tgt" id="t-ural" value="ural"><label for="t-ural">Truck</label>
+        </fieldset>
+        <div class="field">
+          <div class="field-head"><label for="spd">Target speed</label><span class="num"><input id="spd-n" type="text" inputmode="decimal" autocomplete="off" aria-label="Target speed in kilometres per hour"><span class="u">km/h</span></span></div>
+          <div class="range"><input type="range" id="spd" min="0" max="70" step="1" value="30"></div>
+        </div>
+        <div class="field">
+          <div class="field-head"><label for="ang">Crossing angle</label><span class="num"><input id="ang-n" type="text" inputmode="decimal" autocomplete="off" aria-label="Crossing angle in degrees"><span class="u">°</span></span></div>
+          <div class="range"><input type="range" id="ang" min="0" max="90" step="1" value="70"></div>
+          <p class="hint">90° is straight across your front. 0° is driving straight at you.</p>
+        </div>
+        <fieldset class="seg">
+          <legend>Moving</legend>
+          <input type="radio" name="dir" id="d-r" value="1" checked><label for="d-r">Left to right</label>
+          <input type="radio" name="dir" id="d-l" value="-1"><label for="d-l">Right to left</label>
+        </fieldset>
+        <div class="field">
+          <div class="field-head"><label for="rng">Range</label><span class="num"><input id="rng-n" type="text" inputmode="decimal" autocomplete="off" aria-label="Range in metres"><span class="u">m</span></span></div>
+          <div class="range"><input type="range" id="rng" min="30" max="400" step="5" value="200"></div>
+        </div>
+        <fieldset class="seg">
+          <legend>Weapon</legend>
+          <input type="radio" name="wpn" id="w-m72old" value="m72old"><label for="w-m72old">M72 older, 145 m/s</label>
+          <input type="radio" name="wpn" id="w-m72" value="m72" checked><label for="w-m72">M72 newer, 200 m/s</label>
+          <input type="radio" name="wpn" id="w-apilas" value="apilas"><label for="w-apilas">APILAS, 293 m/s</label>
+          <input type="radio" name="wpn" id="w-custom" value="custom"><label for="w-custom">Custom</label>
+        </fieldset>
+        <div class="field">
+          <div class="field-head"><label for="vel">Projectile speed</label><span class="num"><input id="vel-n" type="text" inputmode="decimal" autocomplete="off" aria-label="Projectile speed in metres per second"><span class="u">m/s</span></span></div>
+          <div class="range"><input type="range" id="vel" min="100" max="900" step="1" value="200"></div>
+        </div>
+        <div class="field">
+          <div class="field-head"><label for="lead">Lead, ahead of the middle</label><span class="num"><input id="lead-n" type="text" inputmode="text" autocomplete="off" aria-label="Lead in metres"><span class="u">m</span></span></div>
+          <div class="range"><input type="range" id="lead" min="-10" max="60" step="0.1" value="0"></div>
+          <p class="hint" id="lead-hint"></p>
+        </div>
+        <label class="toggle"><input type="checkbox" id="answer"> Show the correct aim point</label>
+        <button class="btn fire" id="fire" type="button">Fire <kbd>F</kbd></button>
+        <div class="btn-row">
+          <button class="btn" id="auto" type="button">Use the formula</button>
+          <button class="btn" id="scenario" type="button">Random crossing</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="working panel" aria-labelledby="w-h">
+      <h2 id="w-h">The working</h2>
+      <div class="panel-body" id="working"></div>
+    </section>
+
+    <section class="log panel" aria-labelledby="l-h">
+      <h2 id="l-h">Shot log</h2>
+      <div class="panel-body">
+        <div class="score" id="score"></div>
+        <ol id="log"></ol>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="foot"><div class="foot-inner">
+  <p>The vehicle drives in a straight line at a steady speed and the round flies straight at a steady speed. The lead formula is the quick version you can do in your head. The animation solves the real meeting point, so you can see how close the quick version gets. Training aid only.</p>
+  <p class="next"><a class="btn" href="../index.html">Back to the start</a><a class="btn fire" style="width:auto;font-size:var(--step-1)" href="../exam/index.html">Take the exam</a></p>
+</div></footer>
+
+<script src="../assets/js/physics.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

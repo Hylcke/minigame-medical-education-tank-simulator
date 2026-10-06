@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projectile drop, Joakim's Med Ed Tank Simulator</title>
+<meta name="description" content="Set the sight, misjudge the range, and watch where an anti-tank rocket really lands.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="drop-page">
+<a class="skip" href="#main">Skip to the simulator</a>
+<header class="bar">
+  <a class="brand" href="../index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="#B4B98A" stroke-width="2"/><path d="M13 2v7M13 17v7M2 13h7M17 13h7" stroke="#B4B98A" stroke-width="2"/><circle cx="13" cy="13" r="2" fill="#F0A830"/></svg><span>Joakim's Med Ed Tank Simulator<small>Range, drop and lead</small></span></a>
+  <nav aria-label="Exercises"><ol class="steps">
+    <li><a href="../mil-scale/index.html"><span class="n">1</span>Range</a></li>
+    <li><a href="../projectile-drop/index.html" aria-current="page"><span class="n">2</span>Drop</a></li>
+    <li><a href="../lead/index.html"><span class="n">3</span>Lead</a></li>
+    <li><a href="../exam/index.html"><span class="n">4</span>Exam</a></li>
+  </ol></nav>
+</header>
+
+<main id="main">
+  <div class="page-head">
+    <div class="crumb"><b>Exercise 2</b> of 3</div>
+    <h1>Projectile drop</h1>
+    <p class="lede">Rockets like the M72 are slow, so they drop a lot on the way. The sight tilts the tube up to make up for it, but only for the range you set. Get the range wrong and you miss.</p>
+  </div>
+
+  <div class="sim">
+    <div class="view-wrap">
+      <div class="view" id="view-box">
+        <canvas id="view" aria-label="Side view of the round's flight from the firer to the target" role="img"></canvas>
+        <div class="stamp" id="stamp" aria-hidden="true"></div>
+      </div>
+      <div class="view-caption">
+        <span>Heights are stretched <b id="vx">10</b> times so the curve is visible.</span>
+        <span>The circle shows the target at true proportions.</span>
+      </div>
+    </div>
+
+    <section class="controls panel" aria-labelledby="ctl-h">
+      <h2 id="ctl-h">Set up</h2>
+      <div class="panel-body">
+        <fieldset class="seg">
+          <legend>Weapon</legend>
+          <input type="radio" name="wpn" id="w-m72old" value="m72old"><label for="w-m72old">M72 older, 145 m/s</label>
+          <input type="radio" name="wpn" id="w-m72" value="m72" checked><label for="w-m72">M72 newer, 200 m/s</label>
+          <input type="radio" name="wpn" id="w-apilas" value="apilas"><label for="w-apilas">APILAS, 293 m/s</label>
+          <input type="radio" name="wpn" id="w-rifle" value="rifle"><label for="w-rifle">Rifle, 715 m/s</label>
+          <input type="radio" name="wpn" id="w-custom" value="custom"><label for="w-custom">Custom</label>
+        </fieldset>
+        <div class="field">
+          <div class="field-head"><label for="vel">Projectile speed</label><span class="num"><input id="vel-n" type="text" inputmode="decimal" autocomplete="off" aria-label="Projectile speed in metres per second"><span class="u">m/s</span></span></div>
+          <div class="range"><input type="range" id="vel" min="100" max="900" step="1" value="200"></div>
+        </div>
+        <div class="field">
+          <div class="field-head"><label for="rng">True range to target</label><span class="num"><input id="rng-n" type="text" inputmode="decimal" autocomplete="off" aria-label="True range in metres"><span class="u">m</span></span></div>
+          <div class="range"><input type="range" id="rng" min="25" max="500" step="5" value="220"></div>
+        </div>
+        <div class="field">
+          <div class="field-head"><label for="sight">Sight set to</label><span class="num"><input id="sight-n" type="text" inputmode="decimal" autocomplete="off" aria-label="Sight setting in metres"><span class="u">m</span></span></div>
+          <div class="range"><input type="range" id="sight" min="25" max="500" step="5" value="150"></div>
+          <p class="hint">This is your range estimate. Set it to the true range for a perfect shot.</p>
+        </div>
+        <fieldset class="seg">
+          <legend>Target</legend>
+          <input type="radio" name="tgt" id="t-t72" value="t72" checked><label for="t-t72">T-72, 2.2 m</label>
+          <input type="radio" name="tgt" id="t-bmp2" value="bmp2"><label for="t-bmp2">BMP-2, 2.45 m</label>
+          <input type="radio" name="tgt" id="t-btr82" value="btr82"><label for="t-btr82">BTR-82A, 2.8 m</label>
+          <input type="radio" name="tgt" id="t-ural" value="ural"><label for="t-ural">Truck, 2.9 m</label>
+        </fieldset>
+        <label class="toggle"><input type="checkbox" id="ghost" checked> Show the path with a perfect sight setting</label>
+        <button class="btn fire" id="fire" type="button">Fire <kbd>F</kbd></button>
+        <div class="btn-row">
+          <button class="btn" id="match" type="button">Set sight to true range</button>
+          <button class="btn" id="scenario" type="button">Random range error</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="working panel" aria-labelledby="w-h">
+      <h2 id="w-h">The working</h2>
+      <div class="panel-body" id="working"></div>
+    </section>
+
+    <section class="log panel" aria-labelledby="l-h">
+      <h2 id="l-h">Shot log</h2>
+      <div class="panel-body">
+        <div class="score" id="score"></div>
+        <ol id="log"></ol>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="foot"><div class="foot-inner">
+  <p>No air drag, no wind, flat ground, aim on the centre of a vertical target face. Real rockets also burn their motor and slow down, so treat the numbers as the shape of the problem, not a firing table. Speeds from open sources.</p>
+  <p class="next"><a class="btn" href="../lead/index.html">Next: leading a moving target</a></p>
+</div></footer>
+
+<script src="../assets/js/physics.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

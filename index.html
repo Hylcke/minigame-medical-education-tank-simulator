@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Joakim's Med Ed Tank Simulator</title>
+<meta name="description" content="Three interactive simulators: estimate range with a mil scale, see what projectile drop does to a rocket, and learn to lead a moving vehicle.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<a class="skip" href="#tools">Skip to the simulators</a>
+<header class="bar">
+  <a class="brand" href="index.html"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="#B4B98A" stroke-width="2"/><path d="M13 2v7M13 17v7M2 13h7M17 13h7" stroke="#B4B98A" stroke-width="2"/><circle cx="13" cy="13" r="2" fill="#F0A830"/></svg><span>Joakim's Med Ed Tank Simulator<small>Range, drop and lead</small></span></a>
+  <nav aria-label="Exercises"><ol class="steps">
+    <li><a href="mil-scale/index.html"><span class="n">1</span>Range</a></li>
+    <li><a href="projectile-drop/index.html"><span class="n">2</span>Drop</a></li>
+    <li><a href="lead/index.html"><span class="n">3</span>Lead</a></li>
+    <li><a href="exam/index.html"><span class="n">4</span>Exam</a></li>
+  </ol></nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <h1>Joakim's Med Ed Tank Simulator</h1>
+      <p class="lede">Three short exercises and a timed exam from my session on Russian and Soviet armour. Work out how far away a vehicle is, see how much a rocket drops on the way, and practise aiming in front of something that is moving.</p>
+      <div class="hero-actions"><a class="btn fire" href="mil-scale/index.html">Start exercise 1</a><a class="btn" href="exam/index.html">Go straight to the exam</a></div>
+    </div>
+    <div class="scope"><canvas id="hero" role="img" aria-label="A view through a sight: a T-72 drives across the scale and a round is fired ahead of it."></canvas></div>
+  </section>
+
+  <div class="section-head" id="tools"><h2>The three exercises</h2><p>Do them in order. Each one builds on the last.</p></div>
+  <section class="tools" aria-label="Exercises">
+    <a class="tool panel" href="mil-scale/index.html">
+      <canvas data-preview="mil" aria-hidden="true"></canvas>
+      <div class="panel-body">
+        <h2><span class="n">1</span>Range by mil scale</h2>
+        <p>Look through the binoculars, measure the vehicle in mils and work out the range. There's a practice mode that hides the answer and scores you.</p>
+        <div class="formula">Range = size × 1000 ÷ mils</div>
+        <span class="tool-go">Open exercise 1 <span aria-hidden="true">›</span></span>
+      </div>
+    </a>
+    <a class="tool panel" href="projectile-drop/index.html">
+      <canvas data-preview="drop" aria-hidden="true"></canvas>
+      <div class="panel-body">
+        <h2><span class="n">2</span>Projectile drop</h2>
+        <p>Set the sight to one range and put the target at another. Try the old M72, the newer one and APILAS to see how forgiving each one is.</p>
+        <div class="formula">drop = ½ g t², with t = R ÷ v</div>
+        <span class="tool-go">Open exercise 2 <span aria-hidden="true">›</span></span>
+      </div>
+    </a>
+    <a class="tool panel" href="lead/index.html">
+      <canvas data-preview="lead" aria-hidden="true"></canvas>
+      <div class="panel-body">
+        <h2><span class="n">3</span>Leading a moving target</h2>
+        <p>Choose the speed, angle and range, decide how far in front to aim, then fire and see whether the vehicle drives into the round.</p>
+        <div class="formula">lead = v × t × sin θ</div>
+        <span class="tool-go">Open exercise 3 <span aria-hidden="true">›</span></span>
+      </div>
+    </a>
+  </section>
+
+  <section class="exam-cta">
+    <div class="panel exam-cta-inner">
+      <div>
+        <h2>Then take the exam</h2>
+        <p>Five timed levels. You work the numbers out on paper, fire, and get scored on accuracy and speed. Share an exam code and the whole room gets the same numbers.</p>
+      </div>
+      <a class="btn fire" href="exam/index.html">Go to the exam</a>
+    </div>
+  </section>
+
+  <section class="why">
+    <div class="panel">
+      <h2>Why the order matters</h2>
+      <p>You need a range before you can set the sight. Once the sight is right, a moving vehicle adds the last problem: how far in front to aim.</p>
+    </div>
+    <div class="panel">
+      <h2>What's simplified</h2>
+      <p>No wind, no air resistance, flat ground and a vehicle driving in a straight line. Guided weapons like NLAW do all of this for you after a couple of seconds of tracking. Use the numbers to understand the problem, not as firing tables.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot"><div class="foot-inner">
+  <p>Made by Joakim Edman for a med ed session on Russian and Soviet armour recognition. Figures are from open sources and rounded. For teaching only.</p>
+  <p>Barlow typeface by Jeremy Tribby, SIL Open Font Licence.</p>
+</div></footer>
+
+<script src="assets/js/physics.js"></script>
+<script src="assets/js/common.js"></script>
+<script src="assets/js/scope.js"></script>
+<script src="assets/js/home.js"></script>
+</body>
+</html>

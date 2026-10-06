@@ -1,63 +1,47 @@
-# Joakim's Med Ed Tank Simulator
+<p align="center">
+  <img src="assets/readme/banner.png" alt="Joakim's Med Ed Tank Simulator" width="100%">
+</p>
 
-Three interactive exercises that go with my med ed session on Russian and Soviet armour recognition:
+<p align="center">
+  <a href="https://hylcke.github.io/minigame-medical-education-tank-simulator/"><img src="https://img.shields.io/badge/PLAY%20IN%20BROWSER-4B5320?style=for-the-badge&logoColor=white" alt="Play in browser"></a>
+  <img src="https://img.shields.io/badge/EXERCISES-3-6B7334?style=for-the-badge" alt="3 exercises">
+  <img src="https://img.shields.io/badge/EXAM-5%20LEVELS-F2AC3A?style=for-the-badge&labelColor=2B3214" alt="5 exam levels">
+  <img src="https://img.shields.io/badge/INSTALL-NONE-B4B98A?style=for-the-badge&labelColor=2B3214" alt="No install">
+</p>
 
-| Folder | What it teaches |
-| --- | --- |
-| `mil-scale/` | Estimating range by reading a known vehicle size against a binocular mil scale. Explore mode and a scored practise mode. |
-| `projectile-drop/` | What a wrong sight setting does to a slow rocket (older M72, newer M72, APILAS, rifle for comparison). Animated flight, hit or miss, full working. |
-| `lead/` | Aiming ahead of a moving vehicle. Map, close-up and sight picture, animated intercept, formula lead against exact lead. |
+A browser game that goes with my teaching session on Russian and Soviet armour. You look through a sight, work out how far away a vehicle is, allow for the rocket dropping on the way, and aim ahead of something that is moving. Then you sit a timed exam with pen and paper.
 
-| `exam/` | Five timed levels. Work the numbers out on paper, fire, and get scored on accuracy (600), speed (300) and a hit (100) per level. An exam code gives the whole room the same numbers. |
+**[Play it here](https://hylcke.github.io/minigame-medical-education-tank-simulator/)**
 
-The landing page (`index.html`) links them in order: range, drop, lead, then the exam.
+<img src="assets/readme/hit.jpg" alt="An exam level with a hit on a crossing BMP-2" width="100%">
 
-Plain HTML, CSS and JavaScript. No build step, no frameworks, no external requests (fonts are bundled), so it works offline and on GitHub Pages.
+## Exercises
 
-## Put it on GitHub Pages
+| | What you learn | The formula |
+|---|---|---|
+| **1. Mil scale** | Measuring a vehicle in the sight and turning that into a range | range = size × 1000 ÷ mils |
+| **2. Projectile drop** | How far a rocket falls when your range guess is wrong | drop grows with range² ÷ speed² |
+| **3. Lead** | How far ahead to aim at a vehicle crossing your view | lead = speed × time × sin(angle) |
 
-1. Create a new repository on GitHub, for example `ballistics-sim`.
-2. Upload the contents of this folder (not the folder itself) so `index.html` sits at the top of the repository. On github.com: **Add file**, **Upload files**, drag everything in, **Commit changes**.
-3. Go to **Settings**, **Pages**. Under **Build and deployment** choose **Deploy from a branch**, branch `main`, folder `/ (root)`, then **Save**.
-4. After a minute the site is live at `https://<your-user-name>.github.io/ballistics-sim/`.
+Each one has sliders to play with and a sight you can fire through, so you can see the effect of a bad estimate straight away.
 
-Or from a terminal:
+## The exam
 
-```bash
-cd ballistics-sim
-git init && git add . && git commit -m "Range, drop and lead simulators"
-git branch -M main
-git remote add origin https://github.com/<your-user-name>/ballistics-sim.git
-git push -u origin main
-```
+Five levels, each harder than the last, finishing with a full engagement where you range, hold over and lead in one go. Work it out on paper, type your answer and fire.
 
-## Run it locally
+- **Accuracy** counts most, then **speed**, then whether you actually hit.
+- The formulas are on screen, so it tests method rather than memory.
+- Grades run from Fresher up to Consultant.
+- Every exam has a code. Give the whole room the same code (for example `MEDED`) and everyone gets the same targets, which makes for a fair leaderboard.
 
-Double-click `index.html` and it opens in your browser. Nothing to install. If you prefer a local server:
+<img src="assets/readme/lead.jpg" alt="The lead exercise with a moving target" width="100%">
 
-```bash
-python3 -m http.server 8000
-# then open http://localhost:8000
-```
+## Good to know
 
-## The models
+- Built for a laptop or desktop screen. A 1080p display is ideal.
+- Nothing to install, no accounts and no data leaves your browser.
+- The physics is deliberately simplified for teaching. It is not a real fire control tool.
 
-All three use simple, stated models so the numbers on screen add up by hand.
+## Credits
 
-- **Range:** `Range = size x 1000 / mils`. Sizes are hull dimensions from open sources: T-72 6.9 m long, 3.6 m wide, 2.2 m high; BMP-2 6.7 x 3.2 x 2.45 m; BTR-82A 7.6 x 2.9 x 2.8 m; Ural-4320 7.4 x 2.5 x 2.9 m; soldier 1.8 m.
-- **Drop:** no drag, flat fire. Time of flight `t = R / v`, drop below the tube line `1/2 g t^2`. A sight set to range `Rs` lifts the tube by `drop(Rs) x R / Rs` at range `R`, so the miss is `g R (Rs - R) / 2v^2`. The page also gives the window of sight settings that still hit.
-- **Lead:** `lead = v x t x sin(theta)`, with `v` in m/s (`km/h / 3.6`) and `t = R / v_round`. The animation solves the true intercept of a straight-driving vehicle and a straight-flying round and checks the hull footprint, so the formula is tested against the real geometry.
-
-Projectile speeds: older M72 about 145 m/s, newer M72 about 200 m/s, APILAS about 293 m/s, 7.62 mm rifle about 715 m/s.
-
-### A note on the deck's range-error example
-
-A sight set at 150 m on a target at 180 m (200 m/s rocket) gives a miss of about **0.66 m low**, not the 1.2 m you get by subtracting the two raw drops (4.0 m minus 2.8 m). The sight's angle already scales with distance, which cancels part of the extra drop. Likewise, an older M72 set for 200 m on a target at 250 m lands about 2.9 m low, which is still a miss into the ground in front of a 2.2 m high tank. The simulator uses the corrected figure.
-
-## Tests
-
-`tests/physics.test.js` checks the physics against hand-worked numbers (`node tests/physics.test.js`). `tests/shoot.js` and `tests/interact.js` drive the pages in Playwright for screenshots, console errors, keyboard use, reduced motion and hit or miss sweeps. They are not needed on GitHub Pages and can be deleted.
-
-## Licence notes
-
-Barlow and Barlow Condensed by Jeremy Tribby, SIL Open Font Licence 1.1 (`assets/fonts/OFL-Barlow.txt`). All drawings are generated in code. Training aid only, not for operational use.
+Made by Joakim for medical education teaching. Fonts are Barlow and Barlow Condensed by Jeremy Tran, under the SIL Open Font Licence.
